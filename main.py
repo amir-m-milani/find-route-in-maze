@@ -45,6 +45,54 @@ def a_star(grid, start, goal, m, n):
 
     return None  # اگر مسیری یافت نشد
 
+def dfs(grid, start, goal, m, n):
+    """الگوریتم DFS برای پیدا کردن مسیر"""
+    stack = [start]
+    came_from = {}
+    visited = set()
+
+    while stack:
+        current = stack.pop()
+
+        if current == goal:
+            return reconstruct_path(came_from, current)
+
+        if current in visited:
+            continue
+        visited.add(current)
+
+        for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+            neighbor = (current[0] + dx, current[1] + dy)
+            if is_valid_move(neighbor[0], neighbor[1], m, n, grid) and neighbor not in visited:
+                stack.append(neighbor)
+                came_from[neighbor] = current
+
+    return None  # اگر مسیری یافت نشد
+
+def bfs(grid, start, goal, m, n):
+    """الگوریتم BFS برای پیدا کردن مسیر"""
+    queue = [start]
+    came_from = {}
+    visited = set()
+
+    while queue:
+        current = queue.pop(0)
+
+        if current == goal:
+            return reconstruct_path(came_from, current)
+
+        if current in visited:
+            continue
+        visited.add(current)
+
+        for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+            neighbor = (current[0] + dx, current[1] + dy)
+            if is_valid_move(neighbor[0], neighbor[1], m, n, grid) and neighbor not in visited:
+                queue.append(neighbor)
+                came_from[neighbor] = current
+
+    return None  # اگر مسیری یافت نشد
+
 def heuristic(a, b):
     """محاسبه فاصله منهتن برای تخمین هزینه"""
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
@@ -78,7 +126,21 @@ def main():
         print("Invalid start or goal point.")
         return
 
-    path = a_star(grid, start, goal, m, n)
+    print("Choose an algorithm to find the path:")
+    print("1. A* Algorithm")
+    print("2. DFS (Depth-First Search)")
+    print("3. BFS (Breadth-First Search)")
+    choice = int(input("Enter your choice (1/2/3): "))
+
+    if choice == 1:
+        path = a_star(grid, start, goal, m, n)
+    elif choice == 2:
+        path = dfs(grid, start, goal, m, n)
+    elif choice == 3:
+        path = bfs(grid, start, goal, m, n)
+    else:
+        print("Invalid choice.")
+        return
 
     if path:
         print("Path found:", path)
